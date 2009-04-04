@@ -1,0 +1,9 @@
+AUTOMAKE_OPTIONS = foreign
+
+AM_CFLAGS = -g -Wall @LIBUSB_CFLAGS@ @LIBLO_CFLAGS@
+AM_LDFLAGS = @LIBUSB_LIBS@ @LIBLO_LIBS@
+
+bin_PROGRAMS = osc2k8062 dmx-sender
+osc2k8062_SOURCES = osc2k8062.c osc2k8062.h
+dmx_sender_SOURCES = dmx-sender.c
+
