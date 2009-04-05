@@ -204,7 +204,7 @@ void termination_handler(int signum)
     keep_running = 0;
 }
 
-void setup_handers()
+void setup_signals()
 {
     if (signal (SIGINT, termination_handler) == SIG_IGN)
         signal (SIGINT, SIG_IGN);
@@ -219,26 +219,35 @@ void error(int num, const char *msg, const char *path)
     fprintf(stderr, "liblo server error %d in path %s: %s\n", num, path, msg);
 }
 
-int set_handler(const char *path, const char *types, lo_arg **argv, int argc,
+int osc_set_handler(const char *path, const char *types, lo_arg **argv, int argc,
 		 void *data, void *user_data)
 {
-    int channel = argv[0]->i;
-    int value = argv[1]->f * 255;
-    printf("Setting %d to %d.\n", channel, value);
-    channels[channel] = value;
-    
-    // We handled the message
-    return 0;
+    int channel = 0;
+    int value = argv[0]->f * 255;
+    if (sscanf(path, "/dmx/%d/set", &channel)) {
+        printf("Setting %d to %d.\n", channel, value);
+        channels[channel] = value;
+        return 0;
+    } else {
+        fprintf(stderr, "sscanf failed to match: %s\n", path);
+        return 1;
+    }
 }
 
 lo_server_thread start_server(char* port)
 {
     lo_server_thread st = lo_server_thread_new(port, error);
+    int i;
+    
     printf("Started server on port %d.\n", lo_server_thread_get_port(st));
     
-    /* Add the callbacks */
-    lo_server_thread_add_method(st, "/dmx/set", "if", set_handler, NULL);
-
+    /* Add the callbacks for each of the channels */
+    for(i=0;i<channel_count;i++) {
+        char path[16];
+        snprintf(path, 15, "/dmx/%d/set", i);
+        lo_server_thread_add_method(st, path, "f", osc_set_handler, NULL);
+    }
+    
     /* Start the thread */
     lo_server_thread_start( st );
 
@@ -264,7 +273,7 @@ int main() {
     }
 
     /* Setup signal handling - so we exit cleanly */
-    setup_handers();
+    setup_signals();
 
     /* Run the main loop */
     main_loop( udev );
