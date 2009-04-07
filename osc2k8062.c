@@ -225,9 +225,14 @@ int osc_set_handler(const char *path, const char *types, lo_arg **argv, int argc
     int channel = 0;
     int value = argv[0]->f * 255;
     if (sscanf(path, "/dmx/%d/set", &channel)) {
-        printf("Setting %d to %d.\n", channel, value);
-        channels[channel] = value;
-        return 0;
+        if (channel >= 1 && channel <= channel_count) {
+            printf("Setting %d to %d.\n", channel, value);
+            channels[channel-1] = value;
+            return 0;
+        } else {
+            printf("Invalid channel number: %d\n", channel);
+            return 1;
+        }
     } else {
         fprintf(stderr, "sscanf failed to match: %s\n", path);
         return 1;
@@ -242,7 +247,7 @@ lo_server_thread start_server(char* port)
     printf("Started server on port %d.\n", lo_server_thread_get_port(st));
     
     /* Add the callbacks for each of the channels */
-    for(i=0;i<channel_count;i++) {
+    for(i=1;i<=channel_count;i++) {
         char path[16];
         snprintf(path, 15, "/dmx/%d/set", i);
         lo_server_thread_add_method(st, path, "f", osc_set_handler, NULL);

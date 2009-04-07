@@ -59,9 +59,9 @@ loop do
   r,g,b = getRainbowColor(cycle)
   p [cycle,r,g,b]
   
-  sock.send OSC::Message.new('/dmx/0/set', 'f', r), 0
-  sock.send OSC::Message.new('/dmx/1/set', 'f', g), 0
-  sock.send OSC::Message.new('/dmx/2/set', 'f', b), 0
+  sock.send OSC::Message.new('/dmx/1/set', 'f', r), 0
+  sock.send OSC::Message.new('/dmx/2/set', 'f', g), 0
+  sock.send OSC::Message.new('/dmx/3/set', 'f', b), 0
 
   sleep 0.01
   
