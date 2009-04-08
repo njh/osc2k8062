@@ -269,6 +269,9 @@ int main() {
 
     /* Initialise all channels to 0 */
     for(i=0;i<MAX_CHANNELS;i++) channels[i] = 0x00;
+    
+    /* Make stdout unbuffered */
+    setvbuf(stdout, 0, _IONBF, 0);
 
     /* OSC server failed? */
     st = start_server("7770");
