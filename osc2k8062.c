@@ -122,14 +122,6 @@ usb_dev_handle* init_usb()
             return NULL;
         }
 
-        #ifdef LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP
-          if (usb_detach_kernel_driver_np(udev, 0) < 0) {
-              fprintf(stderr, "%s\n", usb_strerror());
-              usb_close(udev);
-              return NULL;
-          }
-        #endif
-
         if (usb_set_configuration(udev, 1) < 0) {
             fprintf(stderr, "Failed to set USB device to configuration 1.\n");
             fprintf(stderr, "%s\n", usb_strerror());
