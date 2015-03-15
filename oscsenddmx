@@ -3,6 +3,6 @@
 if [ $# != 4 ]; then
   echo "Usage: oscsenddmx <hostname> <port> <channel> <value>"
   exit -1
-fi 
+fi
 
 exec oscsend $1 $2 "/dmx/$3/set" "f" $4

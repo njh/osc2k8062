@@ -64,7 +64,7 @@ run_cmd() {
 # Because git doesn't support empty directories
 if [ ! -d "$srcdir/build-scripts" ]; then
 	mkdir "$srcdir/build-scripts"
-fi 
+fi
 
 run_cmd aclocal
 run_cmd autoheader
