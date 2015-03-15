@@ -24,6 +24,19 @@ To build and install osc2k8062 from Git sources, then run the following commands
     make install
 
 
+Mac OS X
+--------
+
+Because the K8062 is an HID class device, the Mac OS X kernel will by default claim 
+the device and libusb will be unable to take control of it. The solution to this problem
+is to install a dummy kernel extension, that leaves it available to userland processes. 
+
+A dummy kernel extension is available in the ```macosx``` directory. The kernel extension 
+can be build and installed using the ```install.sh``` shell script.
+
+The dependencies, [liblo] and [libusb] are both available in [Homebrew].
+
+
 License
 -------
 
@@ -46,4 +59,5 @@ Contact
 [VM116]:            http://www.velleman.eu/products/view/?country=gb&lang=en&id=354968
 [liblo]:            http://liblo.sourceforge.net/
 [libusb]:           http://libusb.info/
+[Homebrew]:         http://brew.sh/
 [@njh]:             http://twitter.com/njh
