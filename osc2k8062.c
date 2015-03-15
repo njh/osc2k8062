@@ -4,8 +4,8 @@
 	OSC to DMX server for the Velleman K8062/VM116 USB DMX controller.
 	Based on k8062forlinux by Denis Moreaux.
 
-	Copyright (C) 2009  Nicholas J. Humfrey
-	Copyright (C) 2008  Denis Moreaux
+	Copyright (C) 2009-2015  Nicholas J. Humfrey
+	Copyright (C) 2008       Denis Moreaux
 	
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -117,6 +117,11 @@ usb_dev_handle* init_usb()
            (dev->descriptor.idProduct == K8062_PRODUCT_ID) )
       {
         usb_dev_handle *udev = usb_open(dev);
+        if (!udev) {
+            fprintf(stderr, "Failed to open USB device: %s\n", usb_strerror());
+            return NULL;
+        }
+
         #ifdef LIBUSB_HAS_DETACH_KERNEL_DRIVER_NP
           if (usb_detach_kernel_driver_np(udev, 0) < 0) {
               fprintf(stderr, "%s\n", usb_strerror());
@@ -124,12 +129,16 @@ usb_dev_handle* init_usb()
               return NULL;
           }
         #endif
+
         if (usb_set_configuration(udev, 1) < 0) {
+            fprintf(stderr, "Failed to set USB device to configuration 1.\n");
             fprintf(stderr, "%s\n", usb_strerror());
             usb_close(udev);
             return NULL;
         }
+
         if (usb_claim_interface(udev, 0) < 0) {
+            fprintf(stderr, "Failed to claim USB device.\n");
             fprintf(stderr, "%s\n", usb_strerror());
             usb_close(udev);
             return NULL;
